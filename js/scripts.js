@@ -32,23 +32,35 @@ form.addEventListener("submit", function(e){
 
 
 for(var k=0; k<fields.length; k++){
+
     
     textNodes.push(document.createTextNode(tableError[k]));
+    
 }
- 
+
+var li;
 
 for(var j=0; j<textNodes.length; j++){
 
-    console.log(textNodes[j]);
-    var li = document.createElement("li");
-
-    li.appendChild(document.createTextNode(textNodes[j].textContent));
-    form.appendChild(li);
+    //console.log(textNodes[j]);
+    li = document.createElement("li");
+    
+    var content = textNodes[j].textContent;
+    if (content!='undefined'){
+    li.appendChild(document.createTextNode(content));
+   form.appendChild(li);
+   
 }
+
+//console.log(li);
+
+}
+
  
 tableError.length=0;
 textNodes.length=0;
 liTable.length=0;
+
 
 }, false)
 
