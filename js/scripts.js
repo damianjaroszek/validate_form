@@ -1,20 +1,27 @@
 // (function() {
     
 var form = document.querySelector("#myForm"),
-    fields = form.querySelectorAll("[data-error]");
+    fields = form.querySelectorAll("[data-error]"),
+    container = document.querySelector(".container");
+    var isUlExsist = document.querySelectorAll("ul");
 
     form.addEventListener("submit", function(e){
         e.preventDefault();
 
         var errors = [];
 
+        // function isEmpty(field){
+        //     if (field.value.length>0){
+        //         return false;
+        //     }else{
+        //         return true;
+        //     }
+        // }
+
         function isEmpty(field){
-            if (field.value.length>0){
-                return false;
-            }else{
-                return true;
+            return !(field.value.length>0) //funkcja ma zwrócić true lub false, krótszy zapis
             }
-        }
+        
 
         function isEmailCorrect(field){
             if (field.value.indexOf('@')!=-1 && field.value.indexOf('.')!=-1 && !isEmpty(field)){
@@ -37,31 +44,56 @@ var form = document.querySelector("#myForm"),
         for(var i=0; i<fields.length; i++){
            // console.log(fields[i].dataset.error);
            var field = fields[i];
+           var isValid = false;
 
            if (field.type==="text" || field.type==="select-one"){ 
-                if (isEmpty(field)){
-                        errors.push(field.dataset.error);
-                }
-            
+                isValid = isEmpty(field);
             }
 
-            if (field.type==="email"){
-                if (/*isEmpty(field) ||*/ isEmailCorrect(field)){
-                    errors.push(field.dataset.error);
-                }
+           else if (field.type==="email"){
+                isValid = isEmailCorrect(field);        
+            }
+
+            else if (field.type==="textarea"){
+                isValid = atLeast(field, 3);      
             }
 
 
-            if (field.type==="textarea"){
-                if (atLeast(field, 3)){
-                    errors.push(field.dataset.error);
-                }
+            if (isValid){   // działa bo to sobie leci w pętli pamiętaj, że field = fields[0]
+                errors.push(field.dataset.error);
+                field.classList.add("error");
+            }
+            else{
+                field.classList.remove("error");
             }
         }
 
+        function showErrorsList(errors){
+           
+
+             var ulCreator = document.createElement("ul");
+            ulCreator.classList.add("errors");
+            
+            for(var i=0; i<errors.length; i++){
+                 var liCreator = document.createElement("li");
+                 var content = document.createTextNode(errors[i]);
+                 liCreator.appendChild(content);
+                 ulCreator.appendChild(liCreator);
+                 //form.appendChild(ulCreator);
+                container.insertBefore(ulCreator, form);   
+            }
+        }
+
+        showErrorsList(errors);
+
         console.log(errors);
+        
 
         
 
 
     }, false);
+
+    console.log(isUlExsist);
+
+    
