@@ -6,7 +6,8 @@ var form = document.querySelector("#myForm"),
     var isUlExsist = document.querySelectorAll("ul");
 
     form.addEventListener("submit", function(e){
-        e.preventDefault();
+        e.preventDefault(); //zapobieganie domyślnej akcji przeglądarki - blokujemy submit, żeby
+                           // uwzględnić warunki, po których ma nastapić subbmit (walidacja)
 
         var errors = [];
 
@@ -20,12 +21,13 @@ var form = document.querySelector("#myForm"),
 
         function isEmpty(field){
             return !(field.value.length>0) //funkcja ma zwrócić true lub false, krótszy zapis
-            }
+            } //jeżeli pole field zawiera jakiekolwiek znaki zwróć false bo zaprzeczenie (można zrobić odwrotnie)
         
 
         function isEmailCorrect(field){
             if (field.value.indexOf('@')!=-1 && field.value.indexOf('.')!=-1 && !isEmpty(field)){
-                return false;
+                return false; // sprawdzamy czy pole email zawiera @ i . we wprowadzonym ciągu znaków i czy 
+                              // przypadkiem pole nie jest puste !isEmpty(field)
             }
             else{
                 return true;
@@ -33,7 +35,8 @@ var form = document.querySelector("#myForm"),
         }
 
         function atLeast(field, min){
-            if (field.value.length>=min){
+            if (field.value.length>=min){ //czy pole zawiera conajmniej określoną w parametrze min liczbę 
+                                          // znaków
                 return false;    
             }
             else {
@@ -41,13 +44,20 @@ var form = document.querySelector("#myForm"),
             }
         }
 
-        for(var i=0; i<fields.length; i++){
-           // console.log(fields[i].dataset.error);
-           var field = fields[i];
-           var isValid = false;
+        for(var i=0; i<fields.length; i++){ // pętla bo będziemy sprawdzać wszystkie pola formularza
+           var field = fields[i]; // wrzucenie w zmienną pole inkrementacji, uproszczenie zapisu
+           var isValid = false; // zmienna isValid, która będzie przechowywała to co zwócą funkcje
+                                // walidacyjne = true l lub false
 
            if (field.type==="text" || field.type==="select-one"){ 
-                isValid = isEmpty(field);
+                isValid = isEmpty(field); //jeżeli pole typu tekstowe (w tym wypadku imie) lub select-one
+                                         // w tym wypadku "temat treści" jest puste isValid = true
+                                         // i jest robiony przeskok do if(isValid) - jeżeli isValid=true 
+                                         // zrób push komunikatu data-errors do tablicy errors i dodaj 
+                                         // klasę error do pola (czerwona obramówka)
+                                         // gdy isValid = false usuń klasę error (czerwona obramówka pola)
+                                         // i tak dla każdego pola w zależności od jego typu
+                //console.log("isvalid: "+isValid);                         
             }
 
            else if (field.type==="email"){
@@ -60,7 +70,7 @@ var form = document.querySelector("#myForm"),
 
 
             if (isValid){   // działa bo to sobie leci w pętli pamiętaj, że field = fields[0]
-                errors.push(field.dataset.error);
+                errors.push(field.dataset.error); // wyjaśnione w if(field.type===text)...
                 field.classList.add("error");
             }
             else{
@@ -84,7 +94,16 @@ var form = document.querySelector("#myForm"),
             }
         }
 
-        showErrorsList(errors);
+
+        if(errors.length){// erroes.length==0{
+            showErrorsList(errors);
+        }else{
+            form.submit();
+        }
+
+
+
+        
 
         console.log(errors);
         
