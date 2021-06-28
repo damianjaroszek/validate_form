@@ -1,4 +1,4 @@
-// (function() {
+ (function() {
     
 var form = document.querySelector("#myForm"),
     fields = form.querySelectorAll("[data-error]"),
@@ -78,41 +78,70 @@ var form = document.querySelector("#myForm"),
             }
         }
 
-        function showErrorsList(errors){
-           
+        /*function showErrorsList(errors){ //funkcja wyświetlająca listę błędów czerwoną czcionką
+                                         // na czerwonym tle
 
-             var ulCreator = document.createElement("ul");
-            ulCreator.classList.add("errors");
-            
-            for(var i=0; i<errors.length; i++){
-                 var liCreator = document.createElement("li");
-                 var content = document.createTextNode(errors[i]);
-                 liCreator.appendChild(content);
-                 ulCreator.appendChild(liCreator);
-                 //form.appendChild(ulCreator);
-                container.insertBefore(ulCreator, form);   
+             var ul = document.querySelector("ul.errors"); // sprawdzamy czy na stronie znajduje się
+                                                           // ul z klasą errors
+             
+             if (!ul){ //ul==null --> nie znajduje się na stronie więc 
+
+                var ul = document.createElement("ul"); // tworzenie ul, bo nie ma na stronie
+                ul.classList.add("errors");             // dodanie ul class="errors"
+            }else {
+                ul.innerHTML=""; // znajduje się na stronie więc wcześniej już była wyświetlana
+                                 // lista aby ja zresetować należy użyć takiego zapisu
             }
+
+            for(var i=0; i<errors.length; i++){ 
+                var li = document.createElement("li"); // stworznie listy
+                var content = document.createTextNode(errors[i]); // wyciągnięcie z tablicy errors wszystkich błędów
+                li.appendChild(content); //przypięcie błędów do li
+                ul.appendChild(li); // przypięcie li do ul
+                //form.appendChild(ulCreator);
+                container.insertBefore(ul, form); // przypięcie ul przed formularzem (lista wyświetla się nad formularzem)  
+            }
+        }*/
+        /////// powyżej moja alternatywna wersja zapisu funkcji, poniżej uproszczona ////////////
+        function showErrorsList(errors) {
+            var ul = document.querySelector("ul.errors"); // sprawdzamy czy na stronie znajduje się
+                                                          // ul z klasą errors
+
+            if(!ul) { // ul == null --> nie znajduje się na stronie więc:
+                ul = document.createElement("ul"); // tworzymy pojedynczy ul
+                ul.classList.add("errors");  // dodajemy klasę ul.errors
+            }
+
+            ul.innerHTML = ""; // gdy ul != null, bo jest taki element na przykład z poprzedniego
+                               // wyświetlenia zrób reset ul - czyszczenie listy (można zapisać w else jak u mnie) 
+
+            errors.forEach(function(error){ // wyciągamy wszystko co znajduje się w tablic errors - 
+                                            // komunikaty z błędami
+                var li = document.createElement("li"); // tyle ile komunikatów stwórz tyle li tak by każdy
+                                                       // komunikat miał swoje li
+                li.textContent = error;  // przypnij do każdego li komunikat błedu np ["Podaj imię i nazwisko"] jeżeli to pole jest puste i tak dla wszystkich
+                ul.appendChild(li); // przypnij wszystkie li do ul
+            });
+
+            form.parentNode.insertBefore(ul, form); // chcemy wstawić listę błędów przed formularzem ale
+                                                    // nie mamy container=querySelector(".container")
+                                                    // i nie chcąc go tworzyć można to zrobić poprzez parentNode
+                                                    // container jest rodzicem dla form (form dziecko)
+                                                    // form.parentNode --> wskaż rodzica dla form = querySelector(".container") to jest równoznaczne
+                                                    //insertBefore(co, przed czym)
         }
 
 
         if(errors.length){// erroes.length==0{
-            showErrorsList(errors);
+            showErrorsList(errors); // jeżeli tablica errors != 0 (zawiera błędy) pokaż listę błędów
         }else{
-            form.submit();
+            form.submit(); // jeżeli errors == 0 wykonaj wysyłkę formularza
         }
-
-
-
-        
 
         console.log(errors);
         
 
-        
-
-
     }, false);
 
-    console.log(isUlExsist);
 
-    
+ })();
